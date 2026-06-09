@@ -1,0 +1,70 @@
+/* ── Survey ─────────────────────────────────────────── */
+.survey-container {
+  max-width: 640px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+.survey-id {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 2rem;
+}
+
+.survey-form fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.survey-form legend {
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-bottom: 1rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.field label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--heading);
+  width: 100%;
+
+  &:focus {
+    outline: 2px solid var(--brand);
+    outline-offset: 1px;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: var(--brand-bold); }
+}

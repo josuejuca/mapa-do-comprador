@@ -1,0 +1,182 @@
+/* ── Section shell ──────────────────────────────────────────────────── */
+.questions {
+  position: relative;
+  background: var(--off);
+  padding: 7rem clamp(24px, 5vw, 64px) 8rem;
+  overflow: hidden;
+}
+
+/* bg-skyline watermark */
+.questions::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 220px;
+  background: url('/bg-skyline.png') bottom center / auto 100% no-repeat;
+  opacity: .07;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.questions-inner {
+  position: relative; z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ── Section header ─────────────────────────────────────────────────── */
+.qs-header { margin-bottom: 3.5rem; overflow: hidden; }
+
+.qs-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--blue-600);
+  margin-bottom: 1rem;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+.qs-eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan-400);
+}
+
+.qs-title {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  color: var(--navy-800);
+  letter-spacing: -.02em;
+  margin-bottom: 1.25rem;
+  /* perspective for child word flips */
+  perspective: 700px;
+  display: flex; flex-wrap: wrap; gap: 0 .28em;
+}
+
+.qs-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(110%) rotateX(40deg);
+  transition:
+    opacity  .55s var(--ease),
+    transform .55s var(--ease);
+  transition-delay: calc(var(--word-i, 0) * 65ms);
+}
+
+.qs-accent-line {
+  height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--cyan-400), var(--blue-500));
+  border-radius: 999px;
+  margin-bottom: 3rem;
+  transition: width .9s var(--ease) .15s;
+}
+
+/* revealed states for header */
+.questions.revealed .qs-eyebrow {
+  opacity: 1;
+  transform: translateY(0);
+}
+.questions.revealed .qs-word {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
+.questions.revealed .qs-accent-line {
+  width: 72px;
+}
+
+/* ── Card list ──────────────────────────────────────────────────────── */
+.qs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Question card ──────────────────────────────────────────────────── */
+.q-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 2rem 2rem 2rem 2.25rem;
+  overflow: hidden;
+
+  /* initial hidden state */
+  opacity: 0;
+  transform: perspective(900px) rotateX(18deg) translateY(56px) scale(.97);
+  filter: blur(3px);
+  transition:
+    opacity   .65s var(--ease),
+    transform .65s var(--ease),
+    filter    .65s var(--ease),
+    box-shadow .28s var(--ease);
+  transition-delay: calc(var(--card-i, 0) * 110ms + 180ms);
+}
+
+/* left accent bar that draws down */
+.q-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 3px; height: 0%;
+  background: linear-gradient(to bottom, var(--cyan-400), var(--blue-500));
+  border-radius: 0 2px 2px 0;
+  transition: height .7s var(--ease);
+  transition-delay: calc(var(--card-i, 0) * 110ms + 420ms);
+}
+
+/* revealed state */
+.questions.revealed .q-card {
+  opacity: 1;
+  transform: perspective(900px) rotateX(0deg) translateY(0) scale(1);
+  filter: blur(0);
+}
+.questions.revealed .q-card::before {
+  height: 100%;
+}
+
+/* hover lift */
+.q-card:hover {
+  box-shadow: 0 12px 40px -10px rgba(0, 88, 204, .13);
+  transform: translateY(-3px) !important;
+}
+
+/* ── Number badge ───────────────────────────────────────────────────── */
+.q-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--blue-100);
+  color: var(--blue-700);
+  font-size: 13px; font-weight: 700;
+  margin-bottom: .9rem;
+
+  /* spring pop — runs when parent becomes revealed */
+  animation: none;
+}
+.questions.revealed .q-badge {
+  animation: badge-pop .6s var(--ease) both;
+  animation-delay: calc(var(--card-i, 0) * 110ms + 380ms);
+}
+@keyframes badge-pop {
+  0%   { transform: scale(0);    opacity: 0; }
+  60%  { transform: scale(1.28); opacity: 1; }
+  80%  { transform: scale(.9);             }
+  100% { transform: scale(1);              }
+}
+
+.q-title {
+  font-size: 1.05rem; font-weight: 600;
+  color: var(--navy-800);
+  margin-bottom: .6rem;
+  line-height: 1.35;
+}
+
+.q-body {
+  font-size: .93rem; line-height: 1.75;
+  color: var(--mute);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .questions { padding: 5rem 1.25rem 6rem; }
+  .q-card { padding: 1.5rem 1.5rem 1.5rem 1.75rem; }
+}

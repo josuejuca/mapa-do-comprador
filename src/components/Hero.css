@@ -1,0 +1,577 @@
+/* ════════════════════════════════════════════════════════════════════
+   Hero — estilo "Daylight" (paleta navy + texto branco)
+   - loading fundido com a intro:
+       enquanto carrega → tela cheia colorida + anel circular girando
+                          + logo branca pulsando no centro
+       quando .hero--ready é aplicada → anel some, logo faz fade-out
+                          junto com o shrink do quadrado, texto sobe
+   - sem componente de preloader separado
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── hero shell ────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  background: #0a0a0a;
+  isolation: isolate;
+
+  /* posição final do quadrado (top / right / bottom / left) */
+  --clip-top:    30.4054%;
+  --clip-right:  15.4054%;
+  --clip-bottom: 30.4054%;
+  --clip-left:   67.5432%;
+
+  /* timings */
+  --intro-delay: 0.15s;
+  --intro-dur:   1.0s;
+  --intro-ease:  cubic-bezier(0.76, 0, 0.18, 1);
+  --expo-ease:   cubic-bezier(0.16, 1.08, 0.38, 0.98);
+  --std-ease:    cubic-bezier(0.4, 0, 0.2, 1);
+  --intro-text-start: calc(var(--intro-delay) + var(--intro-dur) - 0.35s);
+
+  color: #ffffff;
+}
+
+/* ── foto de fundo ─────────────────────────────────────────────── */
+.hero-bg {
+  position: absolute; inset: 0;
+  z-index: 0;
+}
+.hero-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.18);
+}
+.hero--ready .hero-bg img {
+  animation: hero-bg-pan calc(var(--intro-dur) + 0.4s) var(--intro-ease) both;
+}
+.hero-bg-tint {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.20) 40%, rgba(0,0,0,.55) 100%),
+    rgba(15, 15, 15, .35);
+}
+@keyframes hero-bg-pan {
+  from { transform: scale(1.18); }
+  to   { transform: scale(1.08); }
+}
+
+/* ── camada azul (CSS puro) ─────────────────────────────────────── */
+.hero-clip {
+  position: absolute; inset: 0;
+  z-index: 2;
+  /* estado inicial: cobre a tela inteira */
+  clip-path: inset(0% 0% 0% 0%);
+  will-change: clip-path;
+}
+.hero--ready .hero-clip {
+  animation: hero-clip-shrink var(--intro-dur) var(--intro-ease) var(--intro-delay) forwards;
+}
+@keyframes hero-clip-shrink {
+  from { clip-path: inset(0% 0% 0% 0%); }
+  to   { clip-path: inset(var(--clip-top) var(--clip-right) var(--clip-bottom) var(--clip-left)); }
+}
+
+.hero-clip-surface {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 25% 30%, #88ddfa 0%, transparent 55%),
+    radial-gradient(110% 90% at 80% 75%, #0e6c95 0%, transparent 60%),
+    linear-gradient(135deg, #44c8f5 0%, #1f9bd1 55%, #0d5e87 100%);
+}
+.hero-clip-surface::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background:
+    repeating-linear-gradient(
+      122deg,
+      rgba(220, 240, 255, 0)    0px,
+      rgba(220, 240, 255, 0.30) 90px,
+      rgba(220, 240, 255, 0)    180px,
+      rgba(8, 50, 80,    0.32)  270px,
+      rgba(8, 50, 80,    0)     360px
+    );
+  animation: surface-drift 14s linear infinite;
+  will-change: transform;
+}
+.hero-clip-surface::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.27  0 0 0 0 0.56  0 0 0 0 0.78  0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 280px 280px;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  animation: surface-grain 9s steps(6) infinite;
+  pointer-events: none;
+}
+@keyframes surface-drift {
+  0%   { transform: translate3d(0%, 0%, 0)    scale(1.05); }
+  50%  { transform: translate3d(-20%, 12%, 0) scale(1.12); }
+  100% { transform: translate3d(-30%, 18%, 0) scale(1.06); }
+}
+@keyframes surface-grain {
+  0%   { background-position: 0 0; }
+  100% { background-position: 280px 280px; }
+}
+
+/* ── loader (anel circular + logo) ─────────────────────────────── */
+.hero-loader {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: clamp(180px, 22vw, 280px);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+/* anel: rotação contínua durante o loading, fade-out no ready */
+.hero-loader-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, .12);
+  border-top-color: rgba(255, 255, 255, .9);
+  animation: hero-spin 0.95s linear infinite;
+  transition: opacity 0.35s ease, transform 0.45s var(--expo-ease);
+}
+.hero--ready .hero-loader-ring {
+  opacity: 0;
+  transform: scale(1.15);          /* "expande" pra sumir */
+}
+
+/* logo: pulse contínuo durante o loading.
+   o wrapper controla o fade-out (sincronizado com o shrink do clip) */
+.hero-loader-logo-wrap {
+  position: relative;
+  width: 70%;
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  transition: opacity 0.5s ease 0.15s;
+}
+.hero--ready .hero-loader-logo-wrap {
+  opacity: 0;
+}
+.hero-loader-logo {
+  width: 100%;
+  height: auto;
+  filter: brightness(0) invert(1);
+  animation: hero-loader-pulse 1.4s ease-in-out infinite;
+}
+@keyframes hero-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes hero-loader-pulse {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: 1; }
+}
+
+/* ── logo callback (dentro do quadrado depois do intro) ────────── */
+.hero-clip-logo {
+  position: absolute;
+  z-index: 3;
+  width: clamp(80px, 9vw, 130px);
+  height: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0;
+  /* centro do quadrado final */
+  --cx: calc(50% + (var(--clip-left) - var(--clip-right)) / 2);
+  --cy: calc(50% + (var(--clip-top)  - var(--clip-bottom)) / 2);
+  left: var(--cx);
+  top:  var(--cy);
+  transform: translate(-50%, -50%);
+}
+.hero--ready .hero-clip-logo {
+  animation: hero-fade-in 0.6s var(--expo-ease) calc(var(--intro-delay) + var(--intro-dur) + 0.05s) forwards;
+}
+@keyframes hero-fade-in {
+  to { opacity: .92; }
+}
+
+/* ── moldura — linhas finas (1px) e translúcidas ───────────────── */
+.hero-frame {
+  position: absolute; inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.frame-bar {
+  position: absolute;
+  background: rgba(255, 255, 255, .12);
+  opacity: 0;
+  transform: scale(0);
+}
+.frame-top    { top:  calc(var(--clip-top) - 1px);    left: 0; right: 0; height: 1px; transform-origin: left center;   transform: scaleX(0); }
+.frame-bottom { bottom: calc(var(--clip-bottom) - 1px); left: 0; right: 0; height: 1px; transform-origin: right center;  transform: scaleX(0); }
+.frame-left   { left: calc(var(--clip-left) - 1px);   top: 0; bottom: 0; width: 1px;  transform-origin: center top;    transform: scaleY(0); }
+.frame-right  { right: calc(var(--clip-right) - 1px); top: 0; bottom: 0; width: 1px;  transform-origin: center bottom; transform: scaleY(0); }
+
+.hero--ready .frame-top,
+.hero--ready .frame-bottom {
+  animation: frame-grow-x 0.55s var(--expo-ease) calc(var(--intro-delay) + var(--intro-dur) - 0.45s) forwards;
+}
+.hero--ready .frame-left,
+.hero--ready .frame-right {
+  animation: frame-grow-y 0.55s var(--expo-ease) calc(var(--intro-delay) + var(--intro-dur) - 0.45s) forwards;
+}
+@keyframes frame-grow-x { to { transform: scaleX(1); opacity: 1; } }
+@keyframes frame-grow-y { to { transform: scaleY(1); opacity: 1; } }
+
+/* ── header ────────────────────────────────────────────────────── */
+.hero-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px clamp(20px, 4vw, 56px);
+  opacity: 0;
+  transform: translateY(-12px);
+}
+.hero--ready .hero-header {
+  animation: hero-header-in 0.55s var(--expo-ease) var(--intro-text-start) forwards;
+}
+.hero-brand {
+  display: inline-flex; align-items: center;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 14px;
+}
+.hero-brand img {
+  height: 50px; width: auto; display: block;
+}
+.hero-header-title {
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: rgba(255, 255, 255, .95);
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+}
+@keyframes hero-header-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── conteúdo ──────────────────────────────────────────────────── */
+.hero-content {
+  position: absolute; inset: 0;
+  z-index: 4;
+  display: flex; align-items: center;
+  padding: 0 clamp(24px, 6vw, 88px);
+  pointer-events: none;
+}
+.hero-content-inner {
+  max-width: 720px;
+  width: 100%;
+  pointer-events: auto;
+  color: #ffffff;
+}
+
+/* máscara linha-por-linha (Daylight intro-line-mask) */
+.intro-line-mask {
+  position: relative;
+  display: block;
+  text-align: start;
+  overflow: clip;
+}
+.intro-line {
+  position: relative;
+  display: block;
+  text-align: start;
+  transform: translateY(110%);
+  will-change: transform;
+}
+.hero--ready .intro-line {
+  animation: intro-line-rise 0.85s var(--expo-ease) forwards;
+}
+.hero-title .intro-line { margin: -0.04em 0; padding: 0.04em 0; }
+@media (min-width: 1024px) {
+  .hero-title .intro-line { margin: -0.08em 0; padding: 0.08em 0; }
+}
+@keyframes intro-line-rise {
+  to { transform: translateY(0); }
+}
+
+.hero-eyebrow {
+  display: block;
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: rgba(255, 255, 255, .85);
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  font-size: clamp(36px, 7.5vw, 92px);
+  line-height: 1.0;
+  letter-spacing: -.02em;
+  color: #ffffff;
+  margin: 16px 0 0;
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, .25);
+}
+
+.hero-lede-wrap {
+  margin-top: 22px;
+  max-width: 540px;
+}
+.hero-lede {
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .85);
+  font-weight: 400;
+  opacity: 0;
+  transform: translateY(18px);
+}
+.hero--ready .hero-lede {
+  animation: hero-fade-up 0.7s var(--expo-ease) calc(var(--intro-text-start) + 0.30s) forwards;
+}
+@keyframes hero-fade-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CTA — glass ───────────────────────────────────────────────── */
+.hero-cta-wrap {
+  margin-top: 32px;
+  overflow: clip;
+  padding: 0.2em 0;
+}
+.hero-cta {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 18px 32px;
+  min-height: 52px;
+  background: rgba(255, 255, 255, .10);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  letter-spacing: -.01em;
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    0 12px 32px -14px rgba(0, 0, 0, .5),
+    inset 0 1px 0 rgba(255, 255, 255, .15);
+  opacity: 0;
+  transform: translateY(110%);
+  transition:
+    background 220ms var(--std-ease),
+    border-color 220ms var(--std-ease),
+    transform 220ms var(--std-ease);
+}
+.hero--ready .hero-cta {
+  animation:
+    intro-line-rise 0.85s var(--expo-ease) calc(var(--intro-text-start) + 0.42s) forwards,
+    hero-fade-up    0.55s var(--std-ease)  calc(var(--intro-text-start) + 0.42s) forwards;
+}
+.hero-cta-arrow { transition: transform 220ms var(--expo-ease); }
+@media (hover: hover) {
+  .hero-cta:hover {
+    background: rgba(255, 255, 255, .18);
+    border-color: rgba(255, 255, 255, .35);
+    transform: translateY(-2px);
+  }
+  .hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
+}
+.hero-cta:active { transform: translateY(0); }
+.hero-cta:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* ── chips ─────────────────────────────────────────────────────── */
+.hero-chip {
+  position: absolute;
+  z-index: 4;
+  color: #ffffff;
+  pointer-events: none;
+  opacity: 0;
+}
+.hero--ready .hero-chip {
+  animation: hero-chip-in 0.6s var(--expo-ease) calc(var(--intro-text-start) + 0.15s) forwards;
+}
+.hero-chip small {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: rgba(255, 255, 255, .85);
+}
+.hero-chip strong {
+  display: block;
+  font-weight: 500;
+  font-size: 13px;
+  margin-top: 6px;
+}
+.hero-chip-tl {
+  top: calc(var(--clip-top) - 56px);
+  left: var(--clip-left);
+  margin: 0; padding: 0 0 0 8px; list-style: none;
+}
+.hero-chip-tl li { list-style: none; }
+.hero-chip-br {
+  bottom: var(--clip-bottom);
+  right: var(--clip-right);
+  padding: 14px 18px;
+  transform: translate(0, calc(100% + 12px));
+}
+.hero-chip-bar {
+  position: relative;
+  margin-top: 10px;
+  width: 110px; height: 6px;
+  background: rgba(255, 255, 255, .25);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.hero-chip-bar span {
+  position: absolute; inset: 0;
+  width: 0;
+  background: #ffffff;
+  border-radius: 2px;
+}
+.hero--ready .hero-chip-bar span {
+  animation: hero-chip-bar 1.4s var(--expo-ease) calc(var(--intro-text-start) + 0.4s) forwards;
+}
+@keyframes hero-chip-bar {
+  from { width: 0; }
+  to   { width: 99%; }
+}
+.hero-chip-bl {
+  bottom: var(--clip-bottom);
+  left: var(--clip-left);
+  padding: 14px 18px;
+  transform: translate(0, calc(100% + 12px));
+}
+@keyframes hero-chip-in { to { opacity: 1; } }
+
+/* ════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════════════════════ */
+
+/* tablet */
+@media (max-width: 1024px) {
+  .hero {
+    --clip-top:    12%;
+    --clip-right:  8%;
+    --clip-bottom: 60%;
+    --clip-left:   54%;
+  }
+  .hero-content { align-items: flex-end; padding-bottom: 96px; }
+  .hero-chip-tl { top: calc(var(--clip-top) - 40px); }
+  .hero-chip-bl { display: none; }
+}
+
+/* mobile — quadrado pequeno no canto superior direito (nordeste),
+   texto ocupa o restante (esquerda + meio + rodapé) */
+@media (max-width: 640px) {
+  .hero {
+    /* width  ≈ 100 - 58 - 6 = 36% do viewport (~130px em 360px)
+       height ≈ 100 - 9 - 75 = 16% do viewport (~128px em 800px)
+       resultado: quasi-quadrado no topo direito */
+    --clip-top:     9%;
+    --clip-right:   6%;
+    --clip-bottom: 75%;
+    --clip-left:   58%;
+  }
+
+  .hero-header { padding: 16px 18px; }
+  .hero-header-title { display: none; }
+  .hero-brand { padding: 8px 12px; border-radius: 12px; }
+  .hero-brand img { height: 32px; }
+
+  /* conteúdo: começa logo abaixo do quadrado (clip-bottom=75% → o
+     quadrado termina em ~25svh do topo). Usamos 28svh de top padding
+     pra ter um respiro entre o quadrado e o eyebrow. */
+  .hero-content {
+    align-items: stretch;
+    padding: 28svh 22px 28px;
+  }
+  .hero-content-inner {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .hero-eyebrow { font-size: 11px; letter-spacing: .12em; }
+  /* título maior — quebra em 2 linhas "Mapa do / Comprador" e ganha presença */
+  .hero-title  {
+    font-size: clamp(48px, 13.5vw, 72px);
+    line-height: 1.02;
+    margin-top: 18px;
+  }
+  .hero-lede   { font-size: 15px; line-height: 1.55; }
+  /* lede empurrada pra ocupar o espaço sobrando entre título e CTA */
+  .hero-lede-wrap { margin-top: 28px; }
+
+  .hero-cta {
+    padding: 18px 26px;
+    font-size: 15px;
+    width: 100%;
+    justify-content: center;
+  }
+  /* CTA sempre no rodapé do conteúdo */
+  .hero-cta-wrap { margin-top: auto; padding-top: 28px; width: 100%; }
+
+  /* spinner segue no centro da viewport (clip é full-screen no loading) */
+  .hero-loader      { width: clamp(140px, 38vw, 220px); }
+  .hero-clip-logo   { width: clamp(56px, 14vw, 84px); }
+
+  .hero-chip-tl,
+  .hero-chip-br,
+  .hero-chip-bl { display: none; }
+}
+
+/* mobile bem estreito */
+@media (max-width: 380px) {
+  .hero-title { font-size: 28px; }
+  .hero-brand img { height: 28px; }
+}
+
+/* ── prefers-reduced-motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-clip,
+  .hero--ready .hero-clip {
+    animation: none;
+    clip-path: inset(var(--clip-top) var(--clip-right) var(--clip-bottom) var(--clip-left));
+  }
+  .hero-clip-surface::before,
+  .hero-clip-surface::after { animation: none; }
+  .hero-loader,
+  .hero-loader-ring,
+  .hero-loader-logo { animation: none; opacity: 0; }
+  .hero-clip-logo,
+  .hero--ready .hero-clip-logo { opacity: .9; animation: none; }
+  .intro-line,
+  .hero--ready .intro-line { transform: none; animation: none; }
+  .hero-lede,
+  .hero-cta,
+  .hero--ready .hero-lede,
+  .hero--ready .hero-cta { opacity: 1; transform: none; animation: none; }
+  .hero-header,
+  .hero--ready .hero-header { opacity: 1; transform: none; animation: none; }
+  .frame-bar,
+  .hero--ready .frame-bar { animation: none; opacity: 1; transform: none; }
+  .hero-chip,
+  .hero--ready .hero-chip { opacity: 1; animation: none; }
+  .hero-chip-bar span,
+  .hero--ready .hero-chip-bar span { width: 99%; animation: none; }
+}

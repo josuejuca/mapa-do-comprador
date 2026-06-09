@@ -1,0 +1,65 @@
+:root {
+  /* brand palette */
+  --navy-950: #001335;
+  --navy-900: #001A40;
+  --navy-800: #042156;
+  --blue-700: #0058CC;
+  --blue-600: #0070FF;
+  --blue-500: #2D8AFF;
+  --blue-300: #A8CCFF;
+  --blue-100: #E6F0FF;
+  --blue-50:  #F4F8FF;
+  --cyan-400: #40C0FA;
+  --cyan-100: #D9F0FC;
+  /* neutral */
+  --off:    #FAFBFD;
+  --mist:   #F1F4F9;
+  --line:   #D8E1EF;
+  --mute:   #5A6A85;
+  --soft:   #8294B0;
+  /* legacy aliases used by survey */
+  --bg:      var(--off);
+  --text:    var(--mute);
+  --heading: var(--navy-800);
+  --border:  var(--line);
+  --brand:   var(--blue-600);
+  --brand-bold: var(--blue-700);
+  /* motion */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+
+  font-family: 'Futura', 'Futura Std', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--navy-800); 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body { margin: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+p { margin: 0; }
+
+a { color: var(--blue-500); }
+
+img { max-width: 100%; display: block; }
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

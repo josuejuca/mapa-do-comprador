@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>Mapa do Comprador 2026 — Quadraimob</title>
+
+    <!-- Pré-carrega os assets críticos para minimizar o "first paint" -->
+    <link rel="preload" as="image" href="/quadraimob-logo.png" />
+    <link rel="preload" as="image" href="/hero_bg_home.png" />
+
+    <!-- Loader estático: pinta na primeira frame, antes do React montar.
+         CSS inline pra não depender de stylesheet externo.
+         Quando o React monta, o useEffect remove o #boot-loader; como o
+         loader do componente React é visualmente idêntico, não há flash. -->
+    <style>
+      html, body { margin: 0; background: #0a0a0a; }
+      html { color-scheme: dark; }
+
+      #boot-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        overflow: hidden;
+        background:
+          radial-gradient(120% 90% at 25% 30%, #88ddfa 0%, transparent 55%),
+          radial-gradient(110% 90% at 80% 75%, #0e6c95 0%, transparent 60%),
+          linear-gradient(135deg, #44c8f5 0%, #1f9bd1 55%, #0d5e87 100%);
+        /* abre do centro pra fora em clip circular logo no primeiro paint */
+        clip-path: circle(0% at 50% 50%);
+        animation: boot-reveal 0.65s cubic-bezier(0.16, 1.08, 0.38, 0.98) forwards;
+      }
+      @keyframes boot-reveal {
+        to { clip-path: circle(140% at 50% 50%); }
+      }
+
+      /* ondas diagonais derivando — mesma textura do hero React */
+      #boot-loader::before {
+        content: '';
+        position: absolute;
+        inset: -40%;
+        background:
+          repeating-linear-gradient(
+            122deg,
+            rgba(220, 240, 255, 0)    0px,
+            rgba(220, 240, 255, 0.30) 90px,
+            rgba(220, 240, 255, 0)    180px,
+            rgba(8,  50,  80,  0.32)  270px,
+            rgba(8,  50,  80,  0)     360px
+          );
+        animation: boot-drift 14s linear infinite;
+        will-change: transform;
+        pointer-events: none;
+      }
+      /* grão / areia via SVG feTurbulence — overlay sobre tudo */
+      #boot-loader::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='bn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.27  0 0 0 0 0.56  0 0 0 0 0.78  0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23bn)'/%3E%3C/svg%3E");
+        background-size: 280px 280px;
+        mix-blend-mode: overlay;
+        opacity: 0.55;
+        animation: boot-grain 9s steps(6) infinite;
+        pointer-events: none;
+      }
+      @keyframes boot-drift {
+        0%   { transform: translate3d(0%, 0%, 0)    scale(1.05); }
+        50%  { transform: translate3d(-20%, 12%, 0) scale(1.12); }
+        100% { transform: translate3d(-30%, 18%, 0) scale(1.06); }
+      }
+      @keyframes boot-grain {
+        0%   { background-position: 0 0; }
+        100% { background-position: 280px 280px; }
+      }
+
+      .boot-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: clamp(180px, 22vw, 280px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        z-index: 3;     /* acima das pseudo-classes (drift + grain) */
+        animation: boot-spinner-in 0.55s cubic-bezier(0.16, 1.08, 0.38, 0.98) 0.20s forwards;
+      }
+      @keyframes boot-spinner-in {
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+
+      .boot-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255, 255, 255, 0.12);
+        border-top-color: rgba(255, 255, 255, 0.9);
+        animation: boot-spin 0.95s linear infinite;
+      }
+      .boot-spinner img {
+        width: 70%;
+        height: auto;
+        filter: brightness(0) invert(1);
+        animation: boot-pulse 1.4s ease-in-out infinite;
+      }
+      @keyframes boot-spin { to { transform: rotate(360deg); } }
+      @keyframes boot-pulse {
+        0%, 100% { opacity: 0.55; }
+        50%      { opacity: 1; }
+      }
+
+      /* fade-out suave quando o React decide remover o boot */
+      #boot-loader[data-leaving="1"] {
+        transition: opacity 0.35s ease;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #boot-loader { animation: none; clip-path: none; }
+        .boot-spinner { animation: none; opacity: 1; transform: translate(-50%, -50%); }
+        .boot-ring { animation: none; }
+        .boot-spinner img { animation: none; opacity: 0.9; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Boot loader: aparece imediatamente, removido pelo React no mount -->
+    <div id="boot-loader" aria-hidden="true">
+      <div class="boot-spinner">
+        <span class="boot-ring"></span>
+        <img src="/quadraimob-logo.png" alt="" />
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
