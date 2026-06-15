@@ -1,0 +1,24 @@
+.question-card--textarea {
+  min-height: 540px;
+}
+
+.question-card__textarea {
+  display: block;
+  min-height: 168px;
+  padding: 24px 30px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+@media (max-width: 900px) {
+  .question-card--textarea {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .question-card__textarea {
+    min-height: 132px;
+    padding: 18px;
+  }
+}

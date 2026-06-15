@@ -1,0 +1,241 @@
+.brand-page {
+  min-height: 100svh;
+  color: var(--navy-800);
+  background:
+    linear-gradient(180deg, rgba(230, 240, 255, .72), rgba(250, 251, 253, 0) 380px),
+    var(--off);
+}
+
+.brand-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px clamp(20px, 5vw, 72px);
+  background: rgba(250, 251, 253, .82);
+  border-bottom: 1px solid rgba(216, 225, 239, .7);
+  backdrop-filter: blur(14px);
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-logo img {
+  height: 42px;
+}
+
+.brand-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-links a {
+  color: var(--navy-800);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+
+.brand-links a:hover {
+  border-color: var(--line);
+  background: #ffffff;
+}
+
+.brand-hero {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: clamp(64px, 10vw, 116px) 0 56px;
+}
+
+.brand-hero small,
+.brand-section-heading small {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--blue-700);
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.brand-hero h1 {
+  max-width: 820px;
+  color: var(--navy-950);
+  font-family: 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif;
+  font-size: clamp(42px, 7vw, 84px);
+  font-weight: 400;
+  line-height: .98;
+  letter-spacing: -.02em;
+}
+
+.brand-hero p {
+  max-width: 680px;
+  margin-top: 24px;
+  color: var(--mute);
+  font-size: clamp(16px, 1.6vw, 20px);
+  line-height: 1.6;
+}
+
+.brand-section {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0;
+  border-top: 1px solid var(--line);
+}
+
+.brand-section-heading {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.brand-section-heading h2 {
+  color: var(--navy-950);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
+
+.brand-component-grid,
+.brand-token-grid,
+.brand-rule-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.brand-component-card,
+.brand-token,
+.brand-rule-grid p {
+  min-height: 140px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 18px 48px -38px rgba(0, 26, 64, .34);
+}
+
+.brand-component-card code,
+.brand-token code,
+.brand-rule-grid code {
+  color: var(--blue-700);
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+}
+
+.brand-component-card p,
+.brand-rule-grid p {
+  margin-top: 16px;
+  color: var(--mute);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.brand-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: clamp(24px, 5vw, 72px);
+  align-items: start;
+}
+
+.brand-layout-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  counter-reset: brand-layout;
+  list-style: none;
+}
+
+.brand-layout-list li {
+  position: relative;
+  min-height: 76px;
+  padding: 18px 22px 18px 64px;
+  color: var(--mute);
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.brand-layout-list li::before {
+  counter-increment: brand-layout;
+  content: counter(brand-layout, decimal-leading-zero);
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  color: var(--blue-700);
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.brand-token {
+  display: grid;
+  align-content: end;
+  gap: 8px;
+}
+
+.brand-token span {
+  width: 100%;
+  height: 54px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, .06);
+}
+
+.brand-token strong {
+  color: var(--navy-950);
+}
+
+.brand-rules {
+  padding-bottom: 80px;
+}
+
+@media (max-width: 900px) {
+  .brand-component-grid,
+  .brand-token-grid,
+  .brand-rule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brand-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .brand-links {
+    width: 100%;
+  }
+
+  .brand-links a {
+    flex: 1;
+    text-align: center;
+  }
+
+  .brand-component-grid,
+  .brand-token-grid,
+  .brand-rule-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-component-card,
+  .brand-token,
+  .brand-rule-grid p {
+    min-height: 0;
+  }
+}

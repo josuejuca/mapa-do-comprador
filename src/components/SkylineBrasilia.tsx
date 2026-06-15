@@ -1,0 +1,110 @@
+import type { CSSProperties } from 'react'
+
+type SkylineBrasiliaProps = {
+  className?: string
+  width?: number | string
+  height?: number | string
+  mainColor?: string
+  softColor?: string
+  thinColor?: string
+  hatchColor?: string
+  title?: string
+}
+
+export default function SkylineBrasilia({
+  className,
+  width = '100%',
+  height = 'auto',
+  mainColor = '#2F61CF',
+  softColor = '#6FA8FF',
+  thinColor = '#2F61CF',
+  hatchColor = '#2F61CF',
+  title,
+}: SkylineBrasiliaProps) {
+  const style = {
+    '--skyline-main': mainColor,
+    '--skyline-soft': softColor,
+    '--skyline-thin': thinColor,
+    '--skyline-hatch': hatchColor,
+  } as CSSProperties & Record<string, string>
+
+  return (
+    <svg
+      className={className}
+      width={width}
+      height={height}
+      viewBox="0 0 1520 160"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      aria-label={title}
+      style={style}
+    >
+      <style>
+        {`
+          .skyline-main{stroke:var(--skyline-main);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+          .skyline-soft{stroke:var(--skyline-soft);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:.55;}
+          .skyline-thin{stroke:var(--skyline-thin);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:.85;}
+          .skyline-hatch{stroke:var(--skyline-hatch);stroke-width:1.15;stroke-linecap:round;opacity:.72;}
+        `}
+      </style>
+
+      {title && <title>{title}</title>}
+
+      <path className="skyline-soft" d="M42 137.5H1475" />
+      <path className="skyline-thin" d="M42 138.8H1475" opacity=".42" />
+
+      <path className="skyline-main" d="M132 137.5C156 72 190 70 218 137.5" />
+      <path className="skyline-soft" d="M121 137.5C151 82 190 82 226 137.5" />
+      <path className="skyline-main" d="M244 137.5C275 29 310 30 353 137.5" />
+      <path className="skyline-soft" d="M236 137.5C276 45 311 44 364 137.5" />
+      <path className="skyline-main" d="M365 137.5C418 47 517 46 577 137.5" />
+      <path className="skyline-soft" d="M376 137.5C430 68 515 66 570 137.5" />
+      <path className="skyline-thin" d="M76 137.5H600" />
+
+      <g className="skyline-hatch">
+        <path d="M163 134V112" /><path d="M170 132V105" /><path d="M177 132V101" /><path d="M184 132V98" /><path d="M191 132V99" /><path d="M198 132V104" /><path d="M205 132V112" />
+        <path d="M276 132V92" /><path d="M286 132V76" /><path d="M296 132V69" /><path d="M306 132V69" /><path d="M316 132V76" /><path d="M326 132V92" />
+        <path d="M423 132V86" /><path d="M433 132V80" /><path d="M443 132V75" /><path d="M453 132V73" /><path d="M463 132V72" /><path d="M473 132V75" />
+      </g>
+
+      <path className="skyline-thin" d="M528 141C540 141 547 139 553 134C558 129 560 124 567 122" />
+      <path className="skyline-soft" d="M540 139C550 136 555 126 564 122" />
+      <path className="skyline-thin" d="M565 122H630" />
+
+      <path className="skyline-main" d="M618 137.5C633 104 684 104 704 137.5" />
+      <path className="skyline-main" d="M704 137.5C720 104 772 103 800 137.5" />
+
+      <path className="skyline-main" d="M850 137.5V6H870V137.5" />
+      <path className="skyline-main" d="M879 137.5V6H900V137.5" />
+      <path className="skyline-thin" d="M850 7H900" />
+      <path className="skyline-soft" d="M861 7V137.5M890 7V137.5" />
+
+      <path className="skyline-main" d="M943 137.5C972 111 995 91 1008 61C1013 73 1023 75 1029 61C1036 76 1046 75 1051 59C1061 87 1085 111 1118 137.5" />
+      <path className="skyline-main" d="M1007 61C1001 48 1000 39 999 30" />
+      <path className="skyline-main" d="M1018 61C1014 45 1012 33 1010 20" />
+      <path className="skyline-main" d="M1028 61C1028 43 1026 27 1024 14" />
+      <path className="skyline-main" d="M1038 60C1041 43 1043 28 1044 16" />
+      <path className="skyline-main" d="M1048 58C1053 44 1057 31 1061 20" />
+      <path className="skyline-thin" d="M1000 30C1008 42 1014 42 1020 29C1027 43 1035 43 1042 29C1049 42 1056 41 1062 29" />
+      <path className="skyline-thin" d="M1007 61H1052" />
+      <path className="skyline-thin" d="M1030 56V137.5" />
+      <path className="skyline-soft" d="M982 137.5C1001 105 1013 83 1020 62" />
+      <path className="skyline-soft" d="M1078 137.5C1059 105 1046 83 1039 62" />
+      <path className="skyline-soft" d="M960 137.5C984 112 1001 91 1011 66" />
+      <path className="skyline-soft" d="M1100 137.5C1075 112 1058 91 1048 66" />
+      <path className="skyline-thin" d="M1030 21V12" />
+      <path className="skyline-thin" d="M1026 16H1034" />
+
+      <path className="skyline-main" d="M1186 108C1219 105 1286 105 1322 108C1312 128 1291 137 1252 137C1214 137 1195 128 1186 108Z" />
+      <path className="skyline-soft" d="M1195 111C1228 113 1282 113 1312 111" />
+
+      <path className="skyline-soft" d="M1368 137.5C1418 93 1451 50 1480 0" />
+      <path className="skyline-soft" d="M1391 137.5C1432 101 1467 55 1502 0" />
+      <path className="skyline-soft" d="M1414 137.5C1450 104 1487 60 1520 12" />
+      <path className="skyline-soft" d="M1438 137.5C1470 108 1496 78 1520 44" />
+      <path className="skyline-soft" d="M1460 137.5C1484 116 1503 95 1520 70" />
+    </svg>
+  )
+}

@@ -9,6 +9,27 @@
    ════════════════════════════════════════════════════════════════════ */
 
 /* ── hero shell ────────────────────────────────────────────────── */
+@property --clip-top {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 30.4054%;
+}
+@property --clip-right {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 15.4054%;
+}
+@property --clip-bottom {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 30.4054%;
+}
+@property --clip-left {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 67.5432%;
+}
+
 .hero {
   position: relative;
   height: 100svh;
@@ -32,6 +53,52 @@
   --intro-text-start: calc(var(--intro-delay) + var(--intro-dur) - 0.35s);
 
   color: #ffffff;
+}
+
+.hero--edit {
+  --clip-top:    46%;
+  --clip-right:  10%;
+  --clip-bottom: 14%;
+  --clip-left:   72%;
+}
+
+@media (min-width: 1025px) {
+  .hero--moving.hero--ready {
+    animation: hero-clip-travel 10s var(--expo-ease) calc(var(--intro-delay) + var(--intro-dur) + 0.65s) infinite alternate;
+  }
+}
+
+@keyframes hero-clip-travel {
+  0% {
+    --clip-top:    30.4054%;
+    --clip-right:  15.4054%;
+    --clip-bottom: 30.4054%;
+    --clip-left:   67.5432%;
+  }
+  28% {
+    --clip-top:    12%;
+    --clip-right:  49%;
+    --clip-bottom: 61%;
+    --clip-left:   31%;
+  }
+  56% {
+    --clip-top:    50%;
+    --clip-right:  56%;
+    --clip-bottom: 12%;
+    --clip-left:   16%;
+  }
+  78% {
+    --clip-top:    16%;
+    --clip-right:  10%;
+    --clip-bottom: 48%;
+    --clip-left:   66%;
+  }
+  100% {
+    --clip-top:    44%;
+    --clip-right:  24%;
+    --clip-bottom: 18%;
+    --clip-left:   54%;
+  }
 }
 
 /* ── foto de fundo ─────────────────────────────────────────────── */
@@ -62,12 +129,12 @@
 .hero-clip {
   position: absolute; inset: 0;
   z-index: 2;
-  /* estado inicial: cobre a tela inteira */
   clip-path: inset(0% 0% 0% 0%);
   will-change: clip-path;
 }
 .hero--ready .hero-clip {
-  animation: hero-clip-shrink var(--intro-dur) var(--intro-ease) var(--intro-delay) forwards;
+  clip-path: inset(var(--clip-top) var(--clip-right) var(--clip-bottom) var(--clip-left));
+  animation: hero-clip-shrink var(--intro-dur) var(--intro-ease) var(--intro-delay) backwards;
 }
 @keyframes hero-clip-shrink {
   from { clip-path: inset(0% 0% 0% 0%); }
@@ -130,6 +197,21 @@
   aspect-ratio: 1;
   pointer-events: none;
 }
+.hero--ready .hero-loader {
+  animation: hero-loader-to-clip var(--intro-dur) var(--intro-ease) var(--intro-delay) forwards;
+}
+@keyframes hero-loader-to-clip {
+  from {
+    top: 50%;
+    left: 50%;
+    width: clamp(180px, 22vw, 280px);
+  }
+  to {
+    top: calc(50% + (var(--clip-top) - var(--clip-bottom)) / 2);
+    left: calc(50% + (var(--clip-left) - var(--clip-right)) / 2);
+    width: clamp(76px, 7vw, 118px);
+  }
+}
 
 /* anel: rotação contínua durante o loading, fade-out no ready */
 .hero-loader-ring {
@@ -139,11 +221,13 @@
   border: 1.5px solid rgba(255, 255, 255, .12);
   border-top-color: rgba(255, 255, 255, .9);
   animation: hero-spin 0.95s linear infinite;
-  transition: opacity 0.35s ease, transform 0.45s var(--expo-ease);
+  transition:
+    opacity 0.35s ease calc(var(--intro-delay) + var(--intro-dur) - 0.25s),
+    transform 0.45s var(--expo-ease) calc(var(--intro-delay) + var(--intro-dur) - 0.25s);
 }
 .hero--ready .hero-loader-ring {
   opacity: 0;
-  transform: scale(1.15);          /* "expande" pra sumir */
+  transform: scale(.78);
 }
 
 /* logo: pulse contínuo durante o loading.
@@ -154,7 +238,7 @@
   display: grid;
   place-items: center;
   opacity: 1;
-  transition: opacity 0.5s ease 0.15s;
+  transition: opacity 0.45s ease calc(var(--intro-delay) + var(--intro-dur) - 0.15s);
 }
 .hero--ready .hero-loader-logo-wrap {
   opacity: 0;
@@ -474,6 +558,12 @@
     --clip-bottom: 60%;
     --clip-left:   54%;
   }
+  .hero--edit {
+    --clip-top:    26%;
+    --clip-right:  8%;
+    --clip-bottom: 48%;
+    --clip-left:   56%;
+  }
   .hero-content { align-items: flex-end; padding-bottom: 96px; }
   .hero-chip-tl { top: calc(var(--clip-top) - 40px); }
   .hero-chip-bl { display: none; }
@@ -490,6 +580,13 @@
     --clip-right:   6%;
     --clip-bottom: 75%;
     --clip-left:   58%;
+  }
+
+  .hero--edit {
+    --clip-top:    14%;
+    --clip-right:  7%;
+    --clip-bottom: 69%;
+    --clip-left:   55%;
   }
 
   .hero-header { padding: 16px 18px; }
@@ -574,4 +671,5 @@
   .hero--ready .hero-chip { opacity: 1; animation: none; }
   .hero-chip-bar span,
   .hero--ready .hero-chip-bar span { width: 99%; animation: none; }
+  .hero--moving.hero--ready { animation: none; }
 }

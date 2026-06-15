@@ -1,0 +1,169 @@
+.question-card--yes-or-no {
+  min-height: 596px;
+}
+
+.yes-no-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(22px, 3vw, 40px);
+  margin-top: 42px;
+}
+
+.yes-no-option {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 270px;
+  padding: 28px;
+  color: var(--navy-950);
+  background: #F5F5F5;
+  border: 1px solid rgba(0, 19, 53, .12);
+  border-radius: 12px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .74),
+    0 14px 32px -30px rgba(0, 19, 53, .42);
+  cursor: pointer;
+  font: inherit;
+  transition:
+    border-color 180ms var(--ease),
+    background 180ms var(--ease),
+    box-shadow 180ms var(--ease);
+}
+
+.yes-no-option:hover {
+  background: rgba(31, 41, 52, .04);
+  border-color: var(--question-accent-mid);
+}
+
+.yes-no-option--selected {
+  border-color: var(--question-accent);
+  box-shadow:
+    0 0 0 4px var(--question-accent-soft),
+    inset 0 1px 0 rgba(255, 255, 255, .78);
+}
+
+.yes-no-option__check {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 31px;
+  height: 31px;
+  border: 3px solid var(--question-accent);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.yes-no-option--selected .yes-no-option__check::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: inherit;
+  background: var(--question-accent);
+}
+
+.yes-no-option__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(118px, 12vw, 150px);
+  height: clamp(118px, 12vw, 150px);
+  color: var(--question-accent);
+}
+
+.yes-no-option__icon::before {
+  content: '';
+  position: absolute;
+  inset: 13%;
+  border-radius: 50%;
+  background: rgba(31, 41, 52, .08);
+  border: 1px solid rgba(31, 41, 52, .10);
+}
+
+.yes-no-option__icon:has(.yes-no-option__symbol--yes)::before {
+  background: rgba(34, 197, 94, .10);
+  border-color: rgba(34, 197, 94, .16);
+}
+
+.yes-no-option__icon:has(.yes-no-option__symbol--no)::before {
+  background: rgba(239, 68, 68, .10);
+  border-color: rgba(239, 68, 68, .16);
+}
+
+.yes-no-option__symbol {
+  position: relative;
+  z-index: 1;
+  width: 62%;
+  height: 62%;
+}
+
+.yes-no-option__symbol--no {
+  color: #ef4444;
+}
+
+.yes-no-option__symbol--yes {
+  color: #22c55e;
+}
+
+.yes-no-option strong {
+  display: block;
+  margin-top: 16px;
+  color: var(--navy-950);
+  font-size: clamp(21px, 1.8vw, 24px);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.question-card--yes-or-no .question-card__actions {
+  margin-top: 50px;
+}
+
+@media (max-width: 900px) {
+  .question-card--yes-or-no {
+    min-height: 0;
+  }
+
+  .yes-no-option {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .yes-no-options {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .yes-no-option {
+    grid-template-columns: 72px 1fr;
+    place-items: center start;
+    min-height: 112px;
+    padding: 18px 54px 18px 20px;
+  }
+
+  .yes-no-option__check {
+    top: 18px;
+    right: 18px;
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+  }
+
+  .yes-no-option--selected .yes-no-option__check::after {
+    inset: 5px;
+  }
+
+  .yes-no-option__icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .yes-no-option strong {
+    margin-top: 0;
+    font-size: 22px;
+  }
+
+  .question-card--yes-or-no .question-card__actions {
+    margin-top: 26px;
+  }
+}

@@ -1,0 +1,24 @@
+.question-card--field {
+  min-height: 440px;
+}
+
+.question-field-card__input[type='date'],
+.question-field-card__input[type='time'] {
+  color-scheme: light;
+}
+
+.question-field-card__input[type='number'] {
+  appearance: textfield;
+}
+
+.question-field-card__input[type='number']::-webkit-outer-spin-button,
+.question-field-card__input[type='number']::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+@media (max-width: 900px) {
+  .question-card--field {
+    min-height: 0;
+  }
+}

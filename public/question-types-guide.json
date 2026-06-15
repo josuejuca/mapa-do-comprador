@@ -1,0 +1,358 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "description": "Guia completo de tipos de perguntas do nps-qb. Destinado a IAs e desenvolvedores que precisam replicar o formulário em um frontend customizado.",
+    "demo": "/demo",
+    "base_url": "https://SEU_DOMINIO"
+  },
+
+  "api": {
+    "description": "Todos os endpoints são públicos — o enrollmentId funciona como token de acesso único enviado por e-mail ao contato.",
+    "cors": "Access-Control-Allow-Origin: *",
+    "endpoints": {
+      "get_survey": {
+        "method": "GET",
+        "path": "/api/v1/survey/{enrollmentId}",
+        "description": "Retorna os dados completos do survey: info da campanha, perguntas ordenadas, respostas salvas e status.",
+        "response_example": {
+          "enrollment": {
+            "id": "cuid",
+            "status": "sent | partial | complete",
+            "openedAt": "ISO8601 | null",
+            "submittedAt": "ISO8601 | null",
+            "contact": {
+              "name": "string | null"
+            }
+          },
+          "campaign": {
+            "id": "cuid",
+            "name": "string",
+            "type": "nps | form",
+            "slug": "string",
+            "status": "active | draft | paused | ended"
+          },
+          "questions": [
+            {
+              "id": "cuid",
+              "name": "field_name",
+              "label": "Texto exibido ao usuário",
+              "description": "Subtítulo opcional da pergunta",
+              "type": "text | textarea | email | phone | number | date | time | radio | select | multiselect | yes_no | rating | csat | nps_score",
+              "isRequired": true,
+              "order": 0,
+              "options": ["Opção A", "Opção B"]
+            }
+          ],
+          "answers": {
+            "field_name": "valor salvo"
+          }
+        },
+        "error_responses": {
+          "404": { "error": "Enrollment not found" }
+        }
+      },
+      "autosave": {
+        "method": "PATCH",
+        "path": "/api/v1/survey/{enrollmentId}",
+        "description": "Salva respostas parciais. Seguro chamar a cada mudança de campo (debounce recomendado de 1500ms). Faz merge com respostas existentes — nunca apaga valores anteriores.",
+        "body": {
+          "answers": {
+            "field_name": "valor"
+          }
+        },
+        "response_example": {
+          "saved": true,
+          "savedAt": "ISO8601",
+          "answersCount": 3
+        },
+        "error_responses": {
+          "404": { "error": "Enrollment not found" },
+          "409": { "error": "Survey already submitted", "submittedAt": null },
+          "422": { "error": "answers object is required" }
+        }
+      },
+      "submit": {
+        "method": "POST",
+        "path": "/api/v1/survey/{enrollmentId}/submit",
+        "description": "Submissão final. Valida campos obrigatórios, faz merge com autosaves anteriores e marca como completo. Idempotente: se já submetido retorna 409 com os dados salvos.",
+        "body": {
+          "answers": {
+            "field_name": "valor"
+          }
+        },
+        "response_example": {
+          "submitted": true,
+          "submittedAt": "ISO8601",
+          "answersCount": 5
+        },
+        "error_responses": {
+          "404": { "error": "Enrollment not found" },
+          "409": {
+            "submitted": true,
+            "alreadySubmitted": true,
+            "submittedAt": "ISO8601",
+            "answers": {}
+          },
+          "422": {
+            "error": "Missing required fields",
+            "fields": [{ "name": "field_name", "label": "Label da pergunta" }]
+          }
+        }
+      }
+    },
+
+    "flow": [
+      "1. GET /api/v1/survey/{enrollmentId} — carregar dados e respostas salvas",
+      "2. Renderizar as perguntas na ordem do array 'questions'",
+      "3. A cada mudança de campo: PATCH /autosave com debounce de ~1500ms",
+      "4. No submit: POST /submit com todas as respostas coletadas",
+      "5. Se 409 no GET ou no submit: exibir tela 'já respondido'"
+    ]
+  },
+
+  "question_types": [
+    {
+      "type": "text",
+      "label": "Resposta curta",
+      "description": "Campo de texto de linha única para respostas curtas.",
+      "value_format": "string",
+      "ui": {
+        "component": "input[type=text]",
+        "placeholder": "Digite sua resposta...",
+        "validation": "required check: value.trim() !== ''"
+      }
+    },
+    {
+      "type": "textarea",
+      "label": "Parágrafo",
+      "description": "Campo de texto longo para respostas detalhadas.",
+      "value_format": "string",
+      "ui": {
+        "component": "textarea",
+        "rows_suggestion": 4,
+        "resize": "vertical",
+        "validation": "required check: value.trim() !== ''"
+      }
+    },
+    {
+      "type": "email",
+      "label": "E-mail",
+      "description": "Campo com validação de formato de e-mail.",
+      "value_format": "string (email format)",
+      "ui": {
+        "component": "input[type=email]",
+        "placeholder": "seu@email.com",
+        "validation": "HTML5 email validation + required check"
+      }
+    },
+    {
+      "type": "phone",
+      "label": "Telefone",
+      "description": "Campo numérico para número de telefone.",
+      "value_format": "string",
+      "ui": {
+        "component": "input[type=tel]",
+        "placeholder": "(00) 00000-0000",
+        "validation": "required check"
+      }
+    },
+    {
+      "type": "number",
+      "label": "Número",
+      "description": "Aceita apenas valores numéricos.",
+      "value_format": "string (numeric)",
+      "ui": {
+        "component": "input[type=number]",
+        "validation": "required check: value !== ''"
+      }
+    },
+    {
+      "type": "date",
+      "label": "Data",
+      "description": "Seletor nativo de data.",
+      "value_format": "string (YYYY-MM-DD, formato ISO do input[type=date])",
+      "ui": {
+        "component": "input[type=date]",
+        "validation": "required check: value !== ''"
+      }
+    },
+    {
+      "type": "time",
+      "label": "Hora",
+      "description": "Seletor nativo de horário.",
+      "value_format": "string (HH:MM, formato do input[type=time])",
+      "ui": {
+        "component": "input[type=time]",
+        "validation": "required check: value !== ''"
+      }
+    },
+    {
+      "type": "radio",
+      "label": "Múltipla escolha (rádio)",
+      "description": "Seleciona exatamente uma opção de uma lista. Exibido como botões de chip/tag, não como inputs radio nativos.",
+      "value_format": "string (o texto da opção selecionada)",
+      "options_source": "question.options (array de strings)",
+      "ui": {
+        "component": "botões toggle — um por opção em question.options",
+        "behavior": "clique seleciona; clique na opção já selecionada deseleciona",
+        "outros_feature": {
+          "trigger": "se alguma opção for exatamente 'Outros' (case-insensitive)",
+          "behavior": "ao selecionar 'Outros', exibir um input[type=text] adicional abaixo dos botões",
+          "value_saved": "o texto digitado no input (string livre). Se input estiver vazio, salvar 'Outros'",
+          "deselect": "ao selecionar outra opção, esconder o input e limpar o valor de 'Outros'"
+        },
+        "validation": "required check: value.trim() !== ''"
+      }
+    },
+    {
+      "type": "select",
+      "label": "Lista suspensa",
+      "description": "Dropdown nativo com uma única seleção.",
+      "value_format": "string (o texto da opção selecionada)",
+      "options_source": "question.options (array de strings)",
+      "ui": {
+        "component": "select nativo",
+        "placeholder_option": "Selecione...",
+        "outros_feature": {
+          "trigger": "se alguma opção for exatamente 'Outros' (case-insensitive)",
+          "behavior": "ao selecionar 'Outros' no dropdown, exibir um input[type=text] adicional abaixo",
+          "value_saved": "o texto digitado no input livre. Se vazio, salvar 'Outros'",
+          "deselect": "ao selecionar outra opção no dropdown, esconder e limpar o input"
+        },
+        "validation": "required check: value !== '' e não for o placeholder"
+      }
+    },
+    {
+      "type": "multiselect",
+      "label": "Caixas de seleção",
+      "description": "Permite selecionar múltiplas opções simultaneamente.",
+      "value_format": "string com opções separadas por pipe '|' (ex: 'Opção A|Opção C'). String vazia se nenhuma selecionada.",
+      "options_source": "question.options (array de strings)",
+      "ui": {
+        "component": "botões toggle — um por opção, múltipla seleção simultânea",
+        "behavior": "clique alterna seleção da opção individualmente (toggle)",
+        "state_management": "manter array de strings selecionadas; serializar como join('|') para salvar/enviar; deserializar com split('|').filter(Boolean) para carregar",
+        "outros_feature": {
+          "trigger": "se alguma opção for exatamente 'Outros' (case-insensitive)",
+          "behavior": "ao ativar 'Outros', exibir input[type=text] adicional",
+          "value_saved": "o texto digitado é incluído no array de selecionados no lugar de 'Outros'. Ex: 'Opção A|minha resposta livre'",
+          "deselect": "ao desativar 'Outros' (segundo clique), remover o valor livre do array e esconder o input"
+        },
+        "validation": "required check: pelo menos uma opção selecionada (array.length > 0)"
+      }
+    },
+    {
+      "type": "yes_no",
+      "label": "Sim / Não",
+      "description": "Pergunta binária com dois botões de igual largura.",
+      "value_format": "string: 'Sim' ou 'Não'",
+      "ui": {
+        "component": "dois botões lado a lado com flex:1 cada",
+        "options": ["Sim", "Não"],
+        "behavior": "clique seleciona; o botão ativo fica com fundo primary e texto branco",
+        "validation": "required check: value === 'Sim' || value === 'Não'"
+      }
+    },
+    {
+      "type": "rating",
+      "label": "Escala linear (1–5)",
+      "description": "Avaliação em escala de 1 a 5, exibida como botões numéricos.",
+      "value_format": "string numérico: '1' | '2' | '3' | '4' | '5'",
+      "ui": {
+        "component": "5 botões quadrados (ex: 44x44px) com os números 1 a 5",
+        "labels": { "1": "Péssimo", "2": "Ruim", "3": "Regular", "4": "Bom", "5": "Ótimo" },
+        "behavior": "clique seleciona; botão ativo fica com fundo primary. Exibir labels via title/tooltip.",
+        "validation": "required check: value !== ''"
+      }
+    },
+    {
+      "type": "csat",
+      "label": "Satisfação CSAT",
+      "description": "Escala de satisfação com emojis e rótulos. Exibida como 5 botões de emoji.",
+      "value_format": "string numérico: '1' | '2' | '3' | '4' | '5'",
+      "ui": {
+        "component": "5 botões com emoji + label abaixo",
+        "options": [
+          { "value": "1", "emoji": "😡", "label": "Péssimo" },
+          { "value": "2", "emoji": "😕", "label": "Ruim" },
+          { "value": "3", "emoji": "😐", "label": "Regular" },
+          { "value": "4", "emoji": "😊", "label": "Bom" },
+          { "value": "5", "emoji": "😍", "label": "Ótimo" }
+        ],
+        "behavior": "clique seleciona; botão ativo recebe borda e fundo com a cor primary",
+        "validation": "required check: value !== ''"
+      }
+    },
+    {
+      "type": "nps_score",
+      "label": "NPS (0–10)",
+      "description": "Net Promoter Score. 11 botões de 0 a 10 com cores semânticas.",
+      "value_format": "string numérico: '0' a '10'",
+      "ui": {
+        "component": "11 botões com flex:1 cada, na mesma linha (flex-wrap se necessário)",
+        "color_semantics": {
+          "0_to_6": "cor vermelha (detratores) — ex: #dc2626",
+          "7_to_8": "cor amarela (neutros) — ex: #ca8a04",
+          "9_to_10": "cor verde (promotores) — ex: #16a34a"
+        },
+        "behavior": "botão selecionado fica com fundo primary e texto branco. Os não selecionados exibem a cor semântica no texto.",
+        "labels_below": {
+          "left": "Muito improvável",
+          "right": "Muito provável"
+        },
+        "validation": "required check: value !== ''"
+      }
+    }
+  ],
+
+  "state_management": {
+    "description": "Como gerenciar o estado local do formulário.",
+    "answers_object": "Manter um objeto { [question.name]: string } com todas as respostas. Inicializar com os valores de 'answers' retornados pelo GET (respostas salvas anteriormente).",
+    "autosave": {
+      "trigger": "A cada mudança em qualquer campo",
+      "debounce_ms": 1500,
+      "endpoint": "PATCH /api/v1/survey/{enrollmentId}",
+      "body": "{ answers: { [changedFieldName]: newValue } }",
+      "note": "Pode enviar apenas o campo alterado — a API faz merge com os dados existentes"
+    },
+    "submit": {
+      "trigger": "Clique no botão de envio",
+      "pre_validation": "Verificar todos os campos com isRequired === true têm valor não-vazio",
+      "endpoint": "POST /api/v1/survey/{enrollmentId}/submit",
+      "body": "{ answers: todosOsAnswers }",
+      "on_success": "Exibir tela de agradecimento / confirmação",
+      "on_409": "Exibir tela de 'já respondido' com a data de submissão"
+    }
+  },
+
+  "required_validation": {
+    "description": "Como validar campos obrigatórios antes do submit.",
+    "rules": {
+      "text":        "value.trim() !== ''",
+      "textarea":    "value.trim() !== ''",
+      "email":       "value.trim() !== ''",
+      "phone":       "value.trim() !== ''",
+      "number":      "value !== ''",
+      "date":        "value !== ''",
+      "time":        "value !== ''",
+      "radio":       "value.trim() !== ''",
+      "select":      "value !== '' (excluir placeholder vazio)",
+      "multiselect": "value !== '' (pelo menos uma opção — string não vazia após pipe-join)",
+      "yes_no":      "value === 'Sim' || value === 'Não'",
+      "rating":      "value !== ''",
+      "csat":        "value !== ''",
+      "nps_score":   "value !== ''"
+    },
+    "api_validation": "O endpoint /submit também valida no servidor e retorna 422 com os campos faltantes caso a validação client-side seja bypassada."
+  },
+
+  "already_submitted_state": {
+    "description": "Quando o enrollment já foi submetido, o formulário deve exibir uma tela de confirmação.",
+    "detection": [
+      "GET retorna enrollment.submittedAt !== null",
+      "GET retorna enrollment.status === 'complete'",
+      "POST /submit retorna status 409"
+    ],
+    "suggested_ui": "Tela de agradecimento com: ícone de check, mensagem 'Obrigado, sua resposta já foi registrada', data de submissão formatada."
+  }
+}
