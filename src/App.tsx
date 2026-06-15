@@ -28,25 +28,25 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<ErrorPage variant="invalid-link" />} />
-        <Route path="/hero-demo" element={<HeroDemoPage />} />
-        <Route path="/hero-edit" element={<HeroEditPage />} />
-        <Route path="/home-mov" element={<HomeMovPage />} />
-        <Route path="/white" element={<WhitePage />} />
-        <Route path="/white-base" element={<WhiteBasePage />} />
-        <Route path="/question-base/text" element={<QuestionTextDemoPage />} />
-        <Route path="/question-base/mult-question" element={<QuestionMultiSelectDemoPage />} />
-        <Route path="/question-base/radio" element={<QuestionRadioDemoPage />} />
-        <Route path="/question-base/rating" element={<QuestionRatingDemoPage />} />
-        <Route path="/question-base/csat" element={<QuestionCsatDemoPage />} />
-        <Route path="/question-base/nps-score" element={<QuestionNpsScoreDemoPage />} />
-        <Route path="/question-base/textarea" element={<QuestionTextareaDemoPage />} />
-        <Route path="/question-base/email" element={<QuestionEmailDemoPage />} />
-        <Route path="/question-base/phone" element={<QuestionPhoneDemoPage />} />
-        <Route path="/question-base/number" element={<QuestionNumberDemoPage />} />
-        <Route path="/question-base/date" element={<QuestionDateDemoPage />} />
-        <Route path="/question-base/time" element={<QuestionTimeDemoPage />} />
-        <Route path="/question-base/select" element={<QuestionSelectDemoPage />} />
-        <Route path="/question-base/yes-or-not" element={<QuestionYesOrNoDemoPage />} />
+        <Route path="/brand/hero-demo" element={<HeroDemoPage />} />
+        <Route path="/brand/hero-edit" element={<HeroEditPage />} />
+        <Route path="/brand/home-mov" element={<HomeMovPage />} />
+        <Route path="/brand/white" element={<WhitePage />} />
+        <Route path="/brand/white-base" element={<WhiteBasePage />} />
+        <Route path="/brand/question-base/text" element={<QuestionTextDemoPage />} />
+        <Route path="/brand/question-base/mult-question" element={<QuestionMultiSelectDemoPage />} />
+        <Route path="/brand/question-base/radio" element={<QuestionRadioDemoPage />} />
+        <Route path="/brand/question-base/rating" element={<QuestionRatingDemoPage />} />
+        <Route path="/brand/question-base/csat" element={<QuestionCsatDemoPage />} />
+        <Route path="/brand/question-base/nps-score" element={<QuestionNpsScoreDemoPage />} />
+        <Route path="/brand/question-base/textarea" element={<QuestionTextareaDemoPage />} />
+        <Route path="/brand/question-base/email" element={<QuestionEmailDemoPage />} />
+        <Route path="/brand/question-base/phone" element={<QuestionPhoneDemoPage />} />
+        <Route path="/brand/question-base/number" element={<QuestionNumberDemoPage />} />
+        <Route path="/brand/question-base/date" element={<QuestionDateDemoPage />} />
+        <Route path="/brand/question-base/time" element={<QuestionTimeDemoPage />} />
+        <Route path="/brand/question-base/select" element={<QuestionSelectDemoPage />} />
+        <Route path="/brand/question-base/yes-or-not" element={<QuestionYesOrNoDemoPage />} />
         <Route path="/brand" element={<BrandPage />} />
         <Route path="/survey/:id" element={<SurveyPage />} />
         <Route path="*" element={<NotFoundPage />} />

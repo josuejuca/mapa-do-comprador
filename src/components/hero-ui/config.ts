@@ -9,8 +9,8 @@ export const DEFAULT_HERO_CONFIG: HeroConfig = {
   copy: {
     eyebrow: 'Um convite quadraimob',
     title: 'Mapa do Comprador',
-    titleAriaLabel: 'Mapa do Comprador Quadraimob 2026',
-    lede: 'Cada imóvel carrega uma história, um sonho e um novo começo. Criamos o Mapa do Comprador Quadraimob 2026 para entendermos melhor o perfil, as motivações e as preferências dos nossos clientes ao conquistarem um novo imóvel. Suas respostas nos ajudam a desenvolver experiências cada vez mais alinhadas ao que realmente importa nessa jornada.',
+    titleAriaLabel: 'Mapa do Comprador quadraimob 2026',
+    lede: 'Cada imóvel carrega uma história, um sonho e um novo começo. Criamos o Mapa do Comprador quadraimob 2026 para entendermos melhor o perfil, as motivações e as preferências dos nossos clientes ao conquistarem um novo imóvel. Suas respostas nos ajudam a desenvolver experiências cada vez mais alinhadas ao que realmente importa nessa jornada.',
     cta: {
       label: 'Começar minha jornada',
       href: '/question-base/text',
